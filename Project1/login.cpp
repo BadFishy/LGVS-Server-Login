@@ -67,7 +67,7 @@ int Login::start()
 		while (true) {
 
 
-			char sendBuf[100];
+			char sendBuf[64];
 			//string   time = getTime();
 			//const char* nowtime = time.data();
 			sprintf(sendBuf, "LGVS_Login");
@@ -79,34 +79,35 @@ int Login::start()
 			}
 
 			//接收
-			char recvBuf[100];
-			if (recv(sockConnect, recvBuf, 100, 0) == -1)//TCP CLIENT端关闭后，服务器端的recv会一直返回-1，此时如果不退出，服务端recv会一直接收
+			char recvBuf[256];
+			int shou;
+			if (recv(sockConnect, recvBuf, 256, 0) == -1)//TCP CLIENT端关闭后，服务器端的recv会一直返回-1，此时如果不退出，服务端recv会一直接收
 			{
 				login_user->err( "接收失败，可能是客户端已关闭" );
 				break;
 			}
 			else {
-				login_user->out("接收到该客户端发送的信息");//aaaaaaa
-				jieshou(recvBuf);
+				login_user->out("接收到该客户端发送的信息");
+				shou = jieshou(recvBuf);//获取注册/登陆返回的值
 			}
 			memset(recvBuf, 0, sizeof(recvBuf));//把接收的数据清空
 
-
-
-			sprintf(sendBuf, "1");	//登陆成功
+				/**
+			 *	1. 登陆成功
+			 *	2. 登陆失败用户名不存在
+			 *	3. 登陆失败密码错误
+			 *	4. 注册成功
+			 *	5. 注册失败
+			 */
+			sprintf(sendBuf, "%d", shou);
+			login_user->out("将发送给客户端返回值为:" + (string)sendBuf);
 			//发送
 			if (send(sockConnect, sendBuf, strlen(sendBuf) + 1, 0) == SOCKET_ERROR) {
 				login_user->err("发送失败，可能是客户端已关闭");
 				break;
 			}
 
-			/**
-			 *	待添加程序
-			 */
-
-
-
-			
+	
 			break;
 		}
 		closesocket(sockConnect);
@@ -139,54 +140,67 @@ int Login::jieshou(char* s) {
 	string shou[5];
 	p = strtok(s, sep);
 	shou[0] = p;
+
+
 	if (shou[0] == "reg") {
-		for (int i = 1; i < 3; i++) {
-			p = strtok(NULL, sep);
+		for (int i = 0; i < 3; i++) {
 			shou[i] = p;
+			p = strtok(NULL, sep);
 		}
 		c->out("注册账号：" + shou[1] + " 密码：" + shou[2] + " Email：" + shou[3] + " 昵称：" + shou[4]);
-		
-			Login::rege(shou[1], shou[2]);
-		
-		
-			//Login::rege(shou[1], shou[2], shou[3], shou[4]);
-	
+
+		if (Login::rege(shou[1], shou[2]) == false) {
+			return 5;
+		}
+		return 4;
 	}
+		//Login::rege(shou[1], shou[2], shou[3], shou[4]);
 	
 	else if (shou[0] == "login") {
-		for (int i = 1; i < 3; i++) {
-			p = strtok(NULL, sep);
+		for (int i = 0; i < 3; i++) {
 			shou[i] = p;
+			p = strtok(NULL, sep);
 		}
 		c->out("登陆账号：" + shou[1] + " 密码：" + shou[2]);
-		Login::logi(shou[0], shou[1]);
+		if (Login::logi(shou[0], shou[1]) == false) {
+			//待补充;;;;;;;
+		}
+
+		return 1;
 	}
 	
 	return 0;
 }
 
-int Login::rege(string username, string password, string email, string nickname)
+bool Login::rege(string username, string password, string email, string nickname)
 {
 	string query = "INSERT INTO USER (username, password, email, nickname) VALUES ('"
 		+ username + "', '" 
 		+ password + "', '" 
 		+ email + "', '"
 		+ nickname + "');";
-	db->runSQL(query.data());
-	return 0;
+	if (db->runSQL(query.data()) == false) {
+		c->err("注册插入数据库时发生错误！");
+		return false;
+	}
+	return true;
 }
 
-int Login::rege(string username, string password)
+bool Login::rege(string username, string password)
 {
 	string query = "INSERT INTO USER (username, password) VALUES ('"
 		+ username + "', '"
 		+ password + "');";
-	db->runSQL(query.data());
-	return 0;
+	if (db->runSQL(query.data()) == false) {
+		c->err("注册插入数据库时发生错误！");
+		return false;
+	}
+	
+	return true;
 }
 
-int Login::logi(string username, string password)
+bool Login::logi(string username, string password)
 {
-	return 0;
+	return true;
 }
 

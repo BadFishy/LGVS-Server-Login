@@ -22,8 +22,8 @@ bool initdb(Log *c, DB* db) {
 		"`uid` INT UNSIGNED AUTO_INCREMENT,"
 		"`username` VARCHAR(16) NOT NULL,"
 		"`password` CHAR(32) NOT NULL,"
-		"`nickname` VARCHAR(16)"
-		"`email` VARCHAR(50)"
+		"`nickname` VARCHAR(16),"
+		"`email` VARCHAR(50),"
 		"`regtime` DATETIME DEFAULT CURRENT_TIMESTAMP,"
 		"`lasttime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
 		"`money` INT(16) NOT NULL DEFAULT 0,"
@@ -73,6 +73,7 @@ bool initdb(Log *c, DB* db) {
 	return true;
 }
 
+//2. 开启服务端
 int start(Log *c)
 {
 	
@@ -125,10 +126,11 @@ int start(Log *c)
 	return 0;
 }
 
+//1. 初始化
 int init(Log *c) {//初始化
 	if (_access(".\\log", 0) == -1) {	//如果目录不存在
-		c->out("检测到没有日志目录，即将创建...");
 		system("mkdir .\\log");
+		c->out("检测到没有日志目录，目前已经自动创建...");
 		return 1;
 	}
 	if (_access(".\\config.ini", 0) == -1) {//如果配置文件不存在
@@ -144,11 +146,13 @@ int main() {
 	Log *c = new Log;
 	while (true) {
 
+		//1. 初始化
 		if (init(c) == -1) {
 			system("echo - 按任意键重新开始...");
 			system("pause > nul");
 		}
 
+		//2. 开启服务端
 		int kaishi = start(c);
 		if (kaishi == -1) {
 			system("echo - 按任意键重新开始...");

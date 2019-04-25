@@ -19,9 +19,9 @@ private:
 	int len;
 	int port;
 	int jieshou(char*);
-	int rege(string username, string password, string email, string nickname);
-	int rege(string username, string password);
-	int logi(string username, string password);
+	bool rege(string username, string password, string email, string nickname);
+	bool rege(string username, string password);
+	bool logi(string username, string password);
 
 public:
 	Login(Config* config, DB *db_in) {
