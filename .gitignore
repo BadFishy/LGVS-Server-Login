@@ -36,6 +36,7 @@
 /x64
 /Project1/log
 /Project1/x64
+/Project1/config.ini
 !/Project1/libmysql.dll
 !/Project1/libeay32.dll
 !/Project1/libmysql.lib

@@ -132,7 +132,7 @@ int init(Log *c) {//初始化
 		return 1;
 	}
 	if (_access(".\\config.ini", 0) == -1) {//如果配置文件不存在
-		c->err("检测到没有配置文件...");
+		c->err("配置文件不存在！请修改config_origin.ini内的配置后将其更名为config.ini");
 		//ofstream confout(".\\config.ini");
 		return -1;
 	}
