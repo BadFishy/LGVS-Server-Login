@@ -44,7 +44,7 @@ int Login::init()
 	//4.设置监听
 	listen(sock, 5);
 	//cout << "开始监听10099端口..." << endl;
-	c->out("开始监听10099端口...");
+	c->out("开始监听"+ to_string(port) + "端口...");
 
 	//5.等待并接受数据
 	//SOCKADDR_IN addrClient;
@@ -210,7 +210,7 @@ int Login::logi(string username, string password)
 		return 2;//用户名不存在
 	}
 	else {
-		if (db->cunzaiDB("USER", "password", password) == false) {
+		if (db->tongshicunzaiDB("USER", "username", username, "password", password) == false) {
 			return 3;//密码错误
 		}
 		else {

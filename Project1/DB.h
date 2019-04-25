@@ -47,6 +47,7 @@ public:
 	bool connectDB();
 	bool runSQL(const char* query);
 	bool cunzaiDB(string, string, string);
-
+	bool tongshicunzaiDB(string, string, string, string, string);
+	
 };
 

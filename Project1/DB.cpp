@@ -62,5 +62,30 @@ bool DB::cunzaiDB(string biao, string lie, string zhi)
 	return false;
 }
 
+bool DB::tongshicunzaiDB(string biao, string lie1, string zhi1, string lie2, string zhi2)
+{
+	string que = "select * from "
+		+ biao + " where "
+		+ lie1 + " = '"
+		+ zhi1 + "' and "
+		+ lie2 + " = '"
+		+ zhi2 + "'";
+	int res = mysql_query(&mysql, que.data());
+	if (res == 0)
+	{
+
+		MYSQL_RES *result = mysql_store_result(&mysql);
+		my_ulonglong rowCount = mysql_num_rows(result);
+		if (rowCount == 0)
+		{
+			return false;//²»´æÔÚ
+		}
+		else
+		{
+			return true;//´æÔÚ
+		}
+	}
+	return false;
+}
 
 
