@@ -118,6 +118,8 @@ int start(Log *c)
 		login_server->init();	//初始化登陆服务器
 		thread login_thread(start_login_server, login_server);	//创建登录服务器线程
 
+		//db->runSQL("if exists (select username from USER where huai1115) select '1' else select '0'");
+
 		while (true) {
 			cin >> cmd;
 		}
@@ -166,6 +168,8 @@ int main() {
 	}
 	return 0;
 }
+
+
 
 void start_login_server(Login *login_server) {
 	while (true) { login_server->start(); }

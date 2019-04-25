@@ -80,7 +80,7 @@ int Login::start()
 
 			//接收
 			char recvBuf[256];
-			int shou;
+			int rev;//获取注册/登陆返回的值
 			if (recv(sockConnect, recvBuf, 256, 0) == -1)//TCP CLIENT端关闭后，服务器端的recv会一直返回-1，此时如果不退出，服务端recv会一直接收
 			{
 				login_user->err( "接收失败，可能是客户端已关闭" );
@@ -88,18 +88,21 @@ int Login::start()
 			}
 			else {
 				login_user->out("接收到该客户端发送的信息");
-				shou = jieshou(recvBuf);//获取注册/登陆返回的值
+				rev = jieshou(recvBuf);//获取注册/登陆返回的值
 			}
 			memset(recvBuf, 0, sizeof(recvBuf));//把接收的数据清空
 
-				/**
+			/**
+			 *	jieshou(char*) 返回的值
 			 *	1. 登陆成功
 			 *	2. 登陆失败用户名不存在
 			 *	3. 登陆失败密码错误
 			 *	4. 注册成功
-			 *	5. 注册失败
+			 *	5. 注册失败用户名已存在
+			 *	6. 注册失败数据库插入失败
 			 */
-			sprintf(sendBuf, "%d", shou);
+
+			sprintf(sendBuf, "%d", rev);
 			login_user->out("将发送给客户端返回值为:" + (string)sendBuf);
 			//发送
 			if (send(sockConnect, sendBuf, strlen(sendBuf) + 1, 0) == SOCKET_ERROR) {
@@ -149,10 +152,16 @@ int Login::jieshou(char* s) {
 		}
 		c->out("注册账号：" + shou[1] + " 密码：" + shou[2] + " Email：" + shou[3] + " 昵称：" + shou[4]);
 
-		if (Login::rege(shou[1], shou[2]) == false) {
+		if (db->cunzaiDB("USER", "username", shou[1]) == true) {
 			return 5;
 		}
-		return 4;
+		else {
+			if (Login::rege(shou[1], shou[2]) == false) {
+				return 6;
+			}
+			return 4;
+		}
+		
 	}
 		//Login::rege(shou[1], shou[2], shou[3], shou[4]);
 	
@@ -162,11 +171,7 @@ int Login::jieshou(char* s) {
 			p = strtok(NULL, sep);
 		}
 		c->out("登陆账号：" + shou[1] + " 密码：" + shou[2]);
-		if (Login::logi(shou[0], shou[1]) == false) {
-			//待补充;;;;;;;
-		}
-
-		return 1;
+		return Login::logi(shou[1], shou[2]);
 	}
 	
 	return 0;
@@ -199,8 +204,19 @@ bool Login::rege(string username, string password)
 	return true;
 }
 
-bool Login::logi(string username, string password)
+int Login::logi(string username, string password)
 {
-	return true;
+	if (db->cunzaiDB("USER", "username", username) == false) {
+		return 2;//用户名不存在
+	}
+	else {
+		if (db->cunzaiDB("USER", "password", password) == false) {
+			return 3;//密码错误
+		}
+		else {
+			return 1;
+		}
+	}
+	return -1;
 }
 

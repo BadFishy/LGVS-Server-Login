@@ -21,7 +21,7 @@ private:
 	int jieshou(char*);
 	bool rege(string username, string password, string email, string nickname);
 	bool rege(string username, string password);
-	bool logi(string username, string password);
+	int logi(string username, string password);
 
 public:
 	Login(Config* config, DB *db_in) {

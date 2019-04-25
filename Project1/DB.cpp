@@ -37,3 +37,30 @@ bool DB::runSQL(const char* query)
 	}
 	return false;
 }
+
+//查询数据
+bool DB::cunzaiDB(string biao, string lie, string zhi)
+{
+	string que = "select * from "
+		+ biao +" where "+ lie +" = '"
+		+ zhi + "'";
+	int res = mysql_query(&mysql, que.data());
+	if (res == 0)
+	{
+		
+		MYSQL_RES *result = mysql_store_result(&mysql);
+		my_ulonglong rowCount = mysql_num_rows(result);
+		if (rowCount == 0)
+		{
+			return false;//不存在
+		}
+		else
+		{
+			return true;//存在
+		}
+	}
+	return false;
+}
+
+
+
