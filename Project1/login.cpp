@@ -45,10 +45,8 @@ int Login::init()
 	listen(sock, 5);
 	//cout << "开始监听10099端口..." << endl;
 	c->out("开始监听"+ to_string(port) + "端口...");
-
-	//5.等待并接受数据
-	//SOCKADDR_IN addrClient;
-	len = sizeof(SOCKADDR);
+	return 0;
+	
 }
 
 
@@ -57,7 +55,9 @@ int Login::start()
 	
 
 	//while (true) {
-
+		//5.等待并接受数据
+		//SOCKADDR_IN addrClient;
+		len = sizeof(SOCKADDR);
 		c->out("等待用户连接中...");
 		SOCKET sockConnect = accept(sock, (SOCKADDR*)&addrClient, &len);
 
@@ -79,7 +79,7 @@ int Login::start()
 			}
 
 			//接收
-			char recvBuf[256];
+			char recvBuf[256] = "";
 			int rev;//获取注册/登陆返回的值
 			if (recv(sockConnect, recvBuf, 256, 0) == -1)//TCP CLIENT端关闭后，服务器端的recv会一直返回-1，此时如果不退出，服务端recv会一直接收
 			{
