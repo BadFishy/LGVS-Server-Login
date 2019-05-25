@@ -49,7 +49,7 @@ int Login::init()
 	
 }
 
-string uid;
+
 int Login::start()
 {
 	
@@ -103,9 +103,14 @@ int Login::start()
 			 */
 
 			//***在这里插入 当rev==1时更改对应账户数据库的online = true;
-			db->runSQL(("UPDATE `USER` SET `online` = '1' WHERE `USER`.`uid` = '" + uid+"'").c_str());
-
-			sprintf(sendBuf, "%d,%d", rev,stoi(uid));
+			if (uid != "0") {
+				db->runSQL(("UPDATE `USER` SET `online` = '1' WHERE `USER`.`uid` = '" + uid + "'").c_str());
+				sprintf(sendBuf, "%d,%d", rev, stoi(uid));
+			}
+			else {
+				sprintf(sendBuf, "%d", rev);
+			}
+			
 			login_user->out("将发送给客户端返回值为:" + (string)sendBuf);
 			//发送
 			if (send(sockConnect, sendBuf, strlen(sendBuf) + 1, 0) == SOCKET_ERROR) {
@@ -113,9 +118,10 @@ int Login::start()
 				break;
 			}
 
-	
+			
 			break;
 		}
+		uid = "0";
 		closesocket(sockConnect);
 		login_user->out("断开连接");
 		delete login_user;

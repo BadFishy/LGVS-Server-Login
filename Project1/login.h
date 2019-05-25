@@ -12,6 +12,7 @@ class Login
 	 *	使用 start() 启动登陆服务器
 	 */
 private:
+	string uid="0";
 	Log *c;
 	DB *db;
 	SOCKET sock;
