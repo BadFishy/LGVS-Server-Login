@@ -19,13 +19,6 @@ private:
 	string psw;
 	string table;
 	int	port;
-
-	MYSQL_FIELD *fd;    //字段列数组
-	char field[32][32]; //存字段名二维数组
-	MYSQL_RES *res;     //行的一个查询结果集
-	MYSQL_ROW column;   //数据行的列
-
-	bool dbing = false;
 	
 
 public:
@@ -55,9 +48,6 @@ public:
 	bool runSQL(const char* query);
 	bool cunzaiDB(string, string, string);
 	bool tongshicunzaiDB(string, string, string, string, string);
-	bool QueryDatabase(const char* query);
-	string cha(const char* query);
-	string sou(const char* query);
-	string sou_no_hang(const char* query);
+	
 };
 

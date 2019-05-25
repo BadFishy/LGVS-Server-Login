@@ -49,7 +49,7 @@ int Login::init()
 	
 }
 
-
+string uid;
 int Login::start()
 {
 	
@@ -102,7 +102,10 @@ int Login::start()
 			 *	6. 注册失败数据库插入失败
 			 */
 
-			sprintf(sendBuf, "%d", rev);
+			//***在这里插入 当rev==1时更改对应账户数据库的online = true;
+			db->runSQL(("UPDATE `USER` SET `online` = '1' WHERE `USER`.`uid` = '" + uid+"'").c_str());
+
+			sprintf(sendBuf, "%d,%d", rev,stoi(uid));
 			login_user->out("将发送给客户端返回值为:" + (string)sendBuf);
 			//发送
 			if (send(sockConnect, sendBuf, strlen(sendBuf) + 1, 0) == SOCKET_ERROR) {
@@ -171,6 +174,8 @@ int Login::jieshou(char* s) {
 			p = strtok(NULL, sep);
 		}
 		c->out("登陆账号：" + shou[1] + " 密码：" + shou[2]);
+		uid = db->sou_no_hang(("SELECT `uid` FROM `USER` WHERE `username` = '"+ shou [1] + "'").c_str());
+		c->out(uid);
 		return Login::logi(shou[1], shou[2]);
 	}
 	

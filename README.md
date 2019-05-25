@@ -2,6 +2,7 @@
 # LGVS-Server-Login
 
 [LGVS-Server - 凉糕对战平台服务端](https://github.com/BadFishy/LGVS-Server)
+
 [【本项目】凉糕对战平台登陆服务端](https://github.com/BadFishy/LGVS-Server-Login)
 
 ---

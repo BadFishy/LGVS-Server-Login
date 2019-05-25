@@ -19,7 +19,7 @@ bool initdb(Log *c, DB* db) {
 	}
 
 	if (db->runSQL("CREATE TABLE IF NOT EXISTS `USER`("
-		"`uid` INT UNSIGNED AUTO_INCREMENT,"
+		"`uid` INT(16) UNSIGNED AUTO_INCREMENT,"
 		"`username` VARCHAR(16) NOT NULL,"
 		"`password` CHAR(32) NOT NULL,"
 		"`nickname` VARCHAR(16),"
@@ -28,9 +28,38 @@ bool initdb(Log *c, DB* db) {
 		"`lasttime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
 		"`money` INT(16) NOT NULL DEFAULT 0,"
 		"`online` BOOLEAN NOT NULL DEFAULT 0,"
-		"`home` INT(16),"
+		"`home` INT(16) references HOME (hid),"
 		"`ban` BOOLEAN NOT NULL DEFAULT 0,"
 		"PRIMARY KEY(`uid`)"
+		")ENGINE = InnoDB DEFAULT CHARSET = utf8;  ") == false) {
+		return false;
+	}
+
+
+	if (db->runSQL("CREATE TABLE IF NOT EXISTS `HOME`("
+		"`hid` INT(16) UNSIGNED AUTO_INCREMENT,"
+		"`home_class` INT(16) NOT NULL references CLASS (cid),"
+		"`home_max` INT(3) NOT NULL,"
+		"`home_num` INT(3) NOT NULL,"
+		"`home_state` INT(3) NOT NULL DEFAULT 1,"
+		"PRIMARY KEY(`hid`)"
+		")ENGINE = InnoDB DEFAULT CHARSET = utf8;  ") == false) {
+		return false;
+	}
+
+	if (db->runSQL("CREATE TABLE IF NOT EXISTS `CLASS`("
+		"`cid` INT(16) UNSIGNED AUTO_INCREMENT,"
+		"`game_name` VARCHAR(32) NOT NULL,"
+		"`game_max` INT(3) NOT NULL,"
+		"`game_ini` TEXT,"
+		"PRIMARY KEY(`cid`)"
+		")ENGINE = InnoDB DEFAULT CHARSET = utf8;  ") == false) {
+		return false;
+	}
+
+	if (db->runSQL("CREATE TABLE IF NOT EXISTS `ROOM`("
+		"`home` INT(16) NOT NULL references HOME (hid),"
+		"`user` INT(16) NOT NULL references USER (uid)"
 		")ENGINE = InnoDB DEFAULT CHARSET = utf8;  ") == false) {
 		return false;
 	}
@@ -121,7 +150,9 @@ int start(Log *c)
 		//db->runSQL("if exists (select username from USER where huai1115) select '1' else select '0'");
 
 		while (true) {
-			cin >> cmd;
+			Sleep(60000);
+			db->connectDB();
+			
 		}
 	}
 
