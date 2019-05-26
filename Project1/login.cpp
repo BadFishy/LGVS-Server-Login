@@ -103,9 +103,15 @@ int Login::start()
 			 */
 
 			//***在这里插入 当rev==1时更改对应账户数据库的online = true;
+			
 			if (uid != "0") {
-				db->runSQL(("UPDATE `USER` SET `online` = '1' WHERE `USER`.`uid` = '" + uid + "'").c_str());
-				sprintf(sendBuf, "%d,%d", rev, stoi(uid));
+				if (db->tongshicunzaiDB("USER", "uid", uid, "online", "0")) {
+					db->runSQL(("UPDATE `USER` SET `online` = '1' WHERE `USER`.`uid` = '" + uid + "'").c_str());
+					sprintf(sendBuf, "%d,%d", rev, stoi(uid));
+				}
+				else {
+					sprintf(sendBuf, "7");
+				}
 			}
 			else {
 				sprintf(sendBuf, "%d", rev);
@@ -180,7 +186,7 @@ int Login::jieshou(char* s) {
 			p = strtok(NULL, sep);
 		}
 		c->out("登陆账号：" + shou[1] + " 密码：" + shou[2]);
-		uid = db->sou_no_hang(("SELECT `uid` FROM `USER` WHERE `username` = '"+ shou [1] + "'").c_str());
+		
 		c->out(uid);
 		return Login::logi(shou[1], shou[2]);
 	}
@@ -225,6 +231,8 @@ int Login::logi(string username, string password)
 			return 3;//密码错误
 		}
 		else {
+			uid = db->sou_no_hang(("SELECT `uid` FROM `USER` WHERE `username` = '" + username + "'").c_str());
+			
 			return 1;
 		}
 	}
